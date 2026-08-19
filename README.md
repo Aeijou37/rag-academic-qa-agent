@@ -2,169 +2,74 @@
 
 A local academic document question-answering agent based on **Retrieval-Augmented Generation (RAG)**, **LangChain**, **Chroma**, and local LLM deployment.
 
-This project aims to build a lightweight and extensible academic knowledge base system that can parse local documents, construct vector databases, retrieve relevant contexts, and generate grounded answers with source tracing.
+Upload academic documents → ask questions in natural language → get answers with source tracing. Fully local, no external API needed.
 
 ---
 
 ## 📌 Project Overview
 
-With the rapid growth of academic papers, technical reports, and research notes, it becomes increasingly difficult to efficiently search, understand, and summarize large collections of documents.
+This project builds a local academic knowledge base QA system using RAG technology. The system supports document parsing, semantic text chunking, vector embedding, persistent vector storage, MMR retrieval, query rewriting, and local question answering with source tracing.
 
-This project explores the use of RAG technology to build a local academic knowledge base QA system. The system supports document parsing, text chunking, vector embedding, persistent vector storage, semantic retrieval, and local question answering.
-
-The main goal is to enable users to ask questions over their own academic documents and receive answers grounded in the uploaded materials.
+**Key insight**: In RAG systems, **retrieval quality > generation quality > prompt engineering** — the upstream bottleneck (retrieval) determines the system's ceiling. This is structurally identical to my industrial defect classification work (data strategy > model enhancement > loss function).
 
 ---
 
 ## ✨ Key Features
 
-* Local academic document question answering
-* Support for multiple document formats
-* Document parsing and text chunking
-* Vector database construction with Chroma
-* Retrieval-Augmented Generation pipeline
-* MMR-based retrieval for better context diversity
-* Multi-document management and cross-document retrieval
-* Query rewriting for improved retrieval quality
-* Source tracing for answer verification
-* Prompt engineering for more stable responses
-* Local LLM deployment support
+- **Multi-format support**: PDF / DOCX / TXT / MD
+- **Semantic chunking**: RecursiveCharacterTextSplitter (chunk_size=800, overlap=150)
+- **MMR retrieval**: Similarity + diversity constraint, avoids redundant chunks
+- **Query rewriting**: LLM rewrites query for better retrieval (dual-path merge with original)
+- **chat_template**: Standardized chat format to prevent instruction leakage in small models
+- **Constrained System Prompt + post-processing**: Controls verbatim copying and hallucination
+- **Source tracing**: Every answer includes source document and page/paragraph reference
+- **Multi-document management**: Cross-document retrieval with metadata filtering
+- **Local deployment**: No external API required, privacy-friendly
+- **Gradio web interface**: Upload documents, ask questions, view retrieved passages
 
 ---
 
 ## 🧠 Technical Stack
 
-### Programming Language
-
-* Python
-
-### Frameworks and Libraries
-
-* LangChain
-* Chroma
-* PyTorch
-* Transformers
-* Sentence Transformers
-
-### Core Techniques
-
-* Retrieval-Augmented Generation
-* Vector Embedding
-* Semantic Search
-* MMR Retrieval
-* Query Rewriting
-* Prompt Engineering
-* Local Large Language Model Deployment
+| Component | Selection | Purpose |
+|---|---|---|
+| Document parsing | PyPDF2 / python-docx / markdown | PDF/DOCX/TXT/MD |
+| Text splitting | LangChain RecursiveCharacterTextSplitter | Semantic-first chunking |
+| Embedding | BAAI/bge-large-zh-v1.5 | Chinese semantic retrieval |
+| Vector database | Chroma | Persistent storage with metadata |
+| Retrieval | MMR + Query Rewriting | Similarity + diversity + dual-path |
+| Generation | Qwen2.5-7B-Chat (FP16/4bit) | Local LLM |
+| Chat format | tokenizer.apply_chat_template | Prevent instruction leakage |
+| Frontend | Gradio | Web interface |
 
 ---
 
 ## 🏗️ System Pipeline
 
 ```text
-Documents
-   |
-   v
-Document Parsing
-   |
-   v
-Text Chunking
-   |
-   v
-Embedding Generation
-   |
-   v
-Chroma Vector Database
-   |
-   v
-Semantic Retrieval / MMR Retrieval
-   |
-   v
-Prompt Construction
-   |
-   v
-Local LLM Generation
-   |
-   v
+Documents (PDF/DOCX/TXT/MD)
+   ↓
+Document Parsing (extract text + metadata)
+   ↓
+Semantic Chunking (RecursiveCharacterTextSplitter, 800/150)
+   ↓
+Embedding (bge-large-zh-v1.5)
+   ↓
+Chroma Vector Database (persistent, with metadata)
+   ↓
+Query Rewriting (LLM rewrites query, dual-path merge)
+   ↓
+MMR Retrieval (similarity + diversity, Top-K)
+   ↓
+chat_template Construction (standardized format)
+   ↓
+Constrained System Prompt + Context + Question
+   ↓
+Local LLM Generation (Qwen2.5-7B-Chat)
+   ↓
+Post-processing (remove leakage, detect copying, add sources)
+   ↓
 Answer with Source References
-```
-
----
-
-## 📂 Supported Document Types
-
-The system is designed to support common academic document formats, including:
-
-* PDF
-* DOCX
-* TXT
-* Markdown
-
----
-
-## 🚀 Main Modules
-
-### 1. Document Loader
-
-Parses different types of documents and extracts clean text content.
-
-### 2. Text Splitter
-
-Splits long documents into smaller chunks for efficient retrieval and embedding.
-
-### 3. Vector Store
-
-Uses Chroma to store document embeddings persistently.
-
-### 4. Retriever
-
-Retrieves relevant document chunks based on user queries.
-
-### 5. RAG Chain
-
-Combines retrieved contexts with user queries and generates answers through a local language model.
-
-### 6. Source Tracing
-
-Returns source information to help users verify the generated answers.
-
----
-
-## 📊 Project Highlights
-
-* Built a complete local RAG pipeline from document parsing to answer generation.
-* Implemented multi-document retrieval and cross-document question answering.
-* Improved retrieval quality using MMR retrieval and query rewriting.
-* Designed constrained system prompts to reduce hallucination and improve answer format.
-* Supported local model deployment for privacy-friendly academic QA.
-
----
-
-## 🔧 Installation
-
-```bash
-git clone https://github.com/Aeijou37/rag-academic-qa-agent.git
-cd rag-academic-qa-agent
-pip install -r requirements.txt
-```
-
----
-
-## ▶️ Usage
-
-```bash
-python main.py
-```
-
-Example questions:
-
-```text
-What is the main contribution of this paper?
-
-What datasets are used in the experiment?
-
-Summarize the method section of the uploaded document.
-
-Compare the differences between these two papers.
 ```
 
 ---
@@ -175,34 +80,101 @@ Compare the differences between these two papers.
 rag-academic-qa-agent/
 ├── README.md
 ├── requirements.txt
-├── main.py
-├── configs/
-├── data/
-├── docs/
-├── examples/
+├── main.py                    # 主入口 (CLI / Web 模式)
+├── configs/                   # 配置文件
+├── docs/                      # 示例文档
+├── examples/                  # 示例
 └── src/
-    ├── document_loader.py
-    ├── text_splitter.py
-    ├── vector_store.py
-    ├── retriever.py
-    ├── rag_chain.py
-    └── utils.py
+    ├── document_loader.py     # 文档加载 (PDF/DOCX/TXT/MD)
+    ├── text_splitter.py       # 语义切分
+    ├── vector_store.py        # Chroma 向量存储
+    ├── retriever.py           # MMR检索 + 查询改写
+    ├── rag_chain.py           # RAG链路 (Prompt + 后处理)
+    ├── llm.py                 # 本地LLM加载
+    ├── app.py                 # Gradio前端
+    └── utils.py               # 工具函数
 ```
 
 ---
 
-## 📌 Current Status
+## 🚀 Quick Start
 
-This repository is currently being organized and will be continuously updated.
+### 1. Install dependencies
 
-Planned updates:
+```bash
+pip install -r requirements.txt
+```
 
-* Add complete source code
-* Add example documents
-* Add configuration files
-* Add local LLM deployment instructions
-* Add screenshots and demo examples
-* Add evaluation and ablation notes
+### 2. Download embedding model
+
+```bash
+# bge-large-zh-v1.5 will auto-download on first run, or pre-download:
+python -c "
+from sentence_transformers import SentenceTransformer
+SentenceTransformer('BAAI/bge-large-zh-v1.5')
+"
+```
+
+### 3. Download generation model (optional)
+
+```bash
+python -c "
+from huggingface_hub import snapshot_download
+snapshot_download(repo_id='Qwen/Qwen2.5-7B-Chat', local_dir='./models/qwen2.5-7b-chat')
+"
+```
+
+### 4. Put documents in ./docs/
+
+Place PDF/DOCX/TXT/MD files in the `docs/` directory.
+
+### 5. Run
+
+```bash
+# CLI mode (with generation model)
+python main.py --model_path ./models/qwen2.5-7b-chat --mode cli
+
+# CLI mode (retrieval only, no generation model)
+python main.py --mode cli --no_model
+
+# Web mode (Gradio interface)
+python main.py --model_path ./models/qwen2.5-7b-chat --mode web
+
+# Web mode (4bit quantization for 16GB GPU)
+python main.py --model_path ./models/qwen2.5-7b-chat --mode web --load_4bit
+```
+
+### 6. Use the web interface
+
+Open `http://localhost:7860` in your browser:
+1. Upload documents in "文档管理" tab
+2. Ask questions in "问答" tab
+3. View retrieved passages and source tracing
+
+---
+
+## 📊 Key Design Decisions
+
+### 1. chat_template for instruction leakage prevention
+
+Small models (<7B) leak system prompt content when given plain text. Using `tokenizer.apply_chat_template` with proper role tokens (`<|im_start|>system/user/assistant`) eliminates this issue completely.
+
+### 2. Constrained System Prompt + post-processing for verbatim copying
+
+Small models tend to copy retrieved text verbatim instead of summarizing. Dual protection:
+- **Prompt layer**: "用自己的语言概括，不要大段复制原文"
+- **Post-processing**: Detect >50 char verbatim copies and replace with `[原文概括：...]`
+
+### 3. Query rewriting with dual-path merge
+
+User asks "这个方法怎么解决长尾问题" but the paper says "LDAM margin". Query rewriting:
+- Rewritten path: "LDAM margin" → precise match
+- Original path: original query → fallback recall
+- Merge + deduplicate → best of both
+
+### 4. MMR for retrieval diversity
+
+Pure similarity search returns redundant chunks (e.g., 3 copies of the same abstract). MMR selects chunks that are both relevant to the query AND different from already-selected chunks: `λ * Sim(query, doc) - (1-λ) * max(Sim(selected, doc))`.
 
 ---
 
@@ -211,6 +183,6 @@ Planned updates:
 **Guojie Li**
 
 Master's Student in Information and Communication Engineering
-Research interests: Computer Vision, Industrial AI, 3D Reconstruction, RAG Agent, and Local LLM Deployment
+Research interests: Computer Vision, Industrial AI, 3D Reconstruction, RAG Agent, Local LLM Deployment
 
 GitHub: [Aeijou37](https://github.com/Aeijou37)
