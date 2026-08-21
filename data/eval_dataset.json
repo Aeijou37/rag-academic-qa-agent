@@ -1,0 +1,72 @@
+[
+  {
+    "question": "这篇论文的主要贡献是什么？",
+    "answer_chunks": [],
+    "expected_keywords": ["贡献", "提出", "方法"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "实验结果如何？",
+    "answer_chunks": [],
+    "expected_keywords": ["准确率", "实验", "结果"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "用了什么损失函数？",
+    "answer_chunks": [],
+    "expected_keywords": ["损失", "loss", "函数"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "该方法如何解决长尾分布问题？",
+    "answer_chunks": [],
+    "expected_keywords": ["长尾", "类别", "不平衡"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "模型在哪些数据集上进行了验证？",
+    "answer_chunks": [],
+    "expected_keywords": ["数据集", "验证", "实验"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "和之前的方法相比有什么优势？",
+    "answer_chunks": [],
+    "expected_keywords": ["优势", "对比", "提升"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "模型的网络结构是怎样的？",
+    "answer_chunks": [],
+    "expected_keywords": ["网络", "结构", "架构"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "训练细节和超参数设置是什么？",
+    "answer_chunks": [],
+    "expected_keywords": ["训练", "学习率", "超参数"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "论文中的消融实验说明了什么？",
+    "answer_chunks": [],
+    "expected_keywords": ["消融", "实验", "验证"],
+    "source": "",
+    "page": ""
+  },
+  {
+    "question": "未来的研究方向是什么？",
+    "answer_chunks": [],
+    "expected_keywords": ["未来", "方向", "改进"],
+    "source": "",
+    "page": ""
+  }
+]
