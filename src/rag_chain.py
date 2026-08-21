@@ -31,7 +31,7 @@ class RAGChain:
         retriever,
         llm=None,
         top_k: int = 4,
-        retrieval_method: str = "rewrite",
+        retrieval_method: str = "mmr",
     ):
         self.retriever = retriever
         self.llm = llm
@@ -41,6 +41,7 @@ class RAGChain:
     def query(self, question: str, history: list = None, image_path: str = None) -> Dict:
         """完整 RAG 流程：检索 → 构建 Prompt → 生成 → 后处理（支持图像查询）"""
         print(f"\n问题: {question}")
+        print(f"检索方法: {self.retrieval_method}")
         if image_path:
             print(f"附图: {image_path}")
 
